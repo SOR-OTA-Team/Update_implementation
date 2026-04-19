@@ -1,0 +1,46 @@
+http:
+  routers:
+    reposerver:
+      rule: "Host(`reposerver.ota.ce`)"
+      service: reposerver
+    keyserver:
+      rule: "Host(`keyserver.ota.ce`)"
+      service: keyserver
+    director:
+      rule: "Host(`director.ota.ce`)"
+      service: director
+    treehub:
+      rule: "Host(`treehub.ota.ce`)"
+      service: treehub
+    deviceregistry:
+      rule: "Host(`deviceregistry.ota.ce`)"
+      service: deviceregistry
+    campaigner:
+      rule: "Host(`campaigner.ota.ce`)"
+      service: campaigner
+
+  services:
+    reposerver:
+      loadBalancer:
+        servers:
+          - url: "http://ota-lith:7100"
+    keyserver:
+      loadBalancer:
+        servers:
+          - url: "http://ota-lith:7200"
+    director:
+      loadBalancer:
+        servers:
+          - url: "http://ota-lith:7300"
+    treehub:
+      loadBalancer:
+        servers:
+          - url: "http://ota-lith:7400"
+    deviceregistry:
+      loadBalancer:
+        servers:
+          - url: "http://ota-lith:7500"
+    campaigner:
+      loadBalancer:
+        servers:
+          - url: "http://ota-lith:7600"

@@ -1,0 +1,40 @@
+# aktualizr 설정 파일 템플릿
+# /etc/aktualizr/aktualizr.toml 에 복사하여 사용
+#
+# 변경 필요 항목:
+#   - provision_path: credentials.zip 경로
+#   - device_id: ota-ce-gen/device_uuid.txt 의 UUID
+
+[tls]
+server = "https://ota.ce:30443"
+ca_source = "file"
+pkey_source = "file"
+cert_source = "file"
+
+[provision]
+provision_path = "/home/<사용자명>/credentials.zip"
+device_id = "<DEVICE_UUID>"
+primary_ecu_hardware_id = "jetson-nano"
+ecu_registration_endpoint = "https://ota.ce:30443/director/ecus"
+mode = "DeviceCred"
+
+[uptane]
+polling_sec = 10
+director_server = "https://ota.ce:30443/director"
+repo_server = "https://ota.ce:30443/repo"
+
+[storage]
+type = "sqlite"
+path = "/var/lib/aktualizr"
+
+[import]
+base_path = "/var/sota/import"
+tls_cacert_path = "root.crt"
+tls_pkey_path = "pkey.pem"
+tls_clientcert_path = "client.pem"
+
+[pacman]
+type = "none"
+
+[bootloader]
+rollback_mode = "none"
