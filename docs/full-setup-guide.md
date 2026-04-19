@@ -170,6 +170,121 @@ bash scripts/push-update.sh test-binary.bin jetson-nano $(cat ota-ce-gen/device_
 
 ---
 
+## 캠페인(Assignment) 내부 동작 상세
+
+`push-update.sh`가 수행하는 4단계의 내부 동작을 자세히 설명합니다.
+
+### 왜 공식 API를 쓰지 않는가
+
+OTA-CE의 campaigner 서비스는 캠페인 생성 API(`POST /api/v1/campaigns`)를 제공하지만,
+이 엔드포인트는 실제로 `director_v2` DB의 assignment 레코드를 자동으로 생성하지 않습니다.
+director가 타겟을 특정 디바이스에게 서명하려면 `assignments` 테이블에 레코드가 있어야 하므로,
+**DB에 직접 삽입**하는 방식을 사용합니다.
+
+### Step 6-1. 바이너리 업로드 (Image Repository)
+
+```bash
+curl -g -X PUT \
+  "http://reposerver.ota.ce/api/v1/user_repo/targets/<파일명>?name=<파일명>&version=1.0.0&hardwareIds=jetson-nano&length=<SIZE>&checksum%5Bmethod%5D=sha256&checksum%5Bhash%5D=<SHA256>" \
+  -H "x-ats-namespace:default" \
+  -H "Content-Type: application/octet-stream" \
+  --data-binary @<파일>
+```
+
+- reposerver(Image Repository)에 바이너리 원본을 저장합니다.
+- `hardwareIds`로 어떤 하드웨어 타입에 적용 가능한지 태깅합니다.
+- 업로드 성공 시 `director_v2.ecu_targets` 테이블에 파일 메타데이터(filename, sha256, length)가 자동으로 기록됩니다.
+- **URL에서 `[`, `]`는 반드시 `%5B`, `%5D`로 인코딩하거나 `-g` 플래그를 사용해야 합니다.** 그렇지 않으면 curl이 배열 범위로 해석하여 오류가 발생합니다.
+
+### Step 6-2. ECU 시리얼 조회
+
+```bash
+docker exec sor_ota_ce-db-1 mysql -uroot -proot director_v2 \
+  -se "SELECT ecu_serial FROM ecus WHERE device_id='<DEVICE_UUID>' AND deleted=0 LIMIT 1;"
+```
+
+- aktualizr가 최초 실행될 때 `/director/ecus` 엔드포인트로 자신의 ECU 정보를 등록합니다.
+- `ecus` 테이블에는 `device_id`(= Device UUID)와 `ecu_serial`(aktualizr가 생성한 고유값)이 매핑되어 있습니다.
+- assignment는 device 단위가 아니라 **ECU 단위**로 생성되므로 이 시리얼이 필요합니다.
+- aktualizr를 아직 한 번도 실행하지 않은 경우 이 테이블에 레코드가 없으므로 Step 5를 먼저 실행해야 합니다.
+
+### Step 6-3. ecu_targets ID 조회
+
+```bash
+docker exec sor_ota_ce-db-1 mysql -uroot -proot director_v2 \
+  -se "SELECT id FROM ecu_targets WHERE filename='<파일명>' AND sha256='<SHA256>' ORDER BY created_at DESC LIMIT 1;"
+```
+
+- Step 6-1에서 업로드한 파일의 DB 레코드 ID를 가져옵니다.
+- `assignments` 테이블이 파일을 직접 참조하는 것이 아니라 `ecu_targets.id`를 외래키로 사용하기 때문입니다.
+
+### Step 6-4. Assignment 삽입 및 메타데이터 갱신 트리거
+
+```bash
+docker exec sor_ota_ce-db-1 mysql -uroot -proot director_v2 -e "
+DELETE FROM assignments WHERE device_id='<UUID>' AND ecu_serial='<ECU_SERIAL>';
+INSERT INTO assignments (namespace, device_id, ecu_serial, ecu_target_id, correlation_id, in_flight)
+VALUES ('default', '<UUID>', '<ECU_SERIAL>', '<TARGET_ID>', 'urn:here-ota:campaign:<uuid>', 0);
+UPDATE devices SET generated_metadata_outdated=1 WHERE id='<UUID>';"
+```
+
+각 쿼리의 역할:
+
+| 쿼리 | 목적 |
+|------|------|
+| `DELETE FROM assignments` | 기존 할당을 제거하여 중복 방지 |
+| `INSERT INTO assignments` | ECU에 새 타겟을 할당 |
+| `UPDATE devices SET generated_metadata_outdated=1` | director에게 TUF 메타데이터 재서명 요청 |
+
+**`generated_metadata_outdated` 플래그가 핵심입니다.**
+
+director는 디바이스별 `targets.json`을 매번 새로 서명하지 않고, 이전에 서명된 결과를 `device_roles` 테이블에 캐싱해둡니다. aktualizr가 manifest를 전송하면 director는 이 플래그를 확인하여:
+
+```
+generated_metadata_outdated = 0  →  device_roles 캐시를 그대로 전송 (No new updates found)
+generated_metadata_outdated = 1  →  assignments를 재조회하여 targets.json 재서명 후 전송
+```
+
+즉, assignment를 삽입해도 이 플래그를 세우지 않으면 aktualizr는 업데이트를 인식하지 못합니다.
+
+**`correlation_id` 형식 주의:**
+
+```
+올바른 형식: urn:here-ota:campaign:550e8400-e29b-41d4-a716-446655440000
+잘못된 형식: test-campaign-001  ← director가 Invalid correlationId 오류 반환
+```
+
+### 전체 캠페인 흐름 요약
+
+```
+[Mac] push-update.sh
+  │
+  ├─ [1] PUT /api/v1/user_repo/targets/<파일>   → reposerver에 바이너리 저장
+  │                                               director_v2.ecu_targets에 메타데이터 기록
+  │
+  ├─ [2] SELECT ecus WHERE device_id=...         → ECU 시리얼 조회
+  │
+  ├─ [3] SELECT ecu_targets WHERE filename=...   → 타겟 ID 조회
+  │
+  └─ [4] INSERT assignments + UPDATE devices(outdated=1)
+           │
+           │  (aktualizr polling_sec 간격으로 폴링)
+           ▼
+[Jetson] aktualizr
+  │
+  ├─ PUT /director/manifest  →  director가 outdated 플래그 확인
+  │                              assignments 재조회 → targets.json 재서명
+  │                              device_roles 캐시 갱신, outdated=0으로 리셋
+  │
+  ├─ GET /director/targets.json  (디바이스 전용, 서명된 타겟 목록)
+  ├─ GET /repo/targets.json      (Image Repository, 전체 공개)
+  │   └─ 두 targets.json의 sha256 해시 일치 검증 (Uptane 이중 검증)
+  │
+  └─ GET /repo/targets/<파일>    →  /var/sota/images/<SHA256>에 저장
+```
+
+---
+
 ## Step 7. 업데이트 수신 확인 (Jetson)
 
 ```bash
