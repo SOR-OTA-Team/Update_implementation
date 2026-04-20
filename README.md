@@ -30,7 +30,8 @@ Mac에서 OTA-CE 서버를 Docker로 실행하고, Jetson Nano(또는 Linux 보�
 .
 ├── README.md
 ├── docs/
-│   └── full-setup-guide.md         # 전체 설정 가이드 (단계별)
+│   ├── full-setup-guide.md         # 전체 설정 가이드 (단계별) + 캠페인 내부 동작
+│   └── aktualizr-storage-internals.md  # 스토리지 구조, 락, HSM, TOML 설정 상세
 ├── scripts/
 │   ├── gen-device-cert.sh          # 디바이스 인증서 생성
 │   ├── get-credentials.sh          # credentials.zip 생성
