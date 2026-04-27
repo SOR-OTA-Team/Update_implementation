@@ -56,8 +56,9 @@ cd sor_ota_ce
 # 서버 인증서 생성
 bash scripts/gen-server-certs.sh
 
-# 서버 실행
-docker compose -f ota-ce.yaml up db -d && sleep 15
+# 서버 실행 (kafka 먼저, 20초 대기 후 나머지)
+docker compose -f ota-ce.yaml up db zookeeper kafka -d
+# 20초 대기 후
 docker compose -f ota-ce.yaml up -d
 
 # 헬스 체크

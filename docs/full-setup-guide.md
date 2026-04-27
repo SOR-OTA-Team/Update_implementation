@@ -35,17 +35,35 @@ sudo bash -c 'echo "127.0.0.1  reposerver.ota.ce keyserver.ota.ce director.ota.c
 
 ### 1-3. 서버 실행
 
+**반드시 아래 순서를 지켜야 합니다.** kafka가 먼저 올라와야 ota-lith가 정상 기동됩니다.
+
 ```bash
-docker compose -f ota-ce.yaml up db -d
-sleep 15
+# 1단계: DB, zookeeper, kafka 먼저 실행
+docker compose -f ota-ce.yaml up db zookeeper kafka -d
+```
+
+20초 대기 후:
+
+```bash
+# 2단계: 나머지 전체 실행
 docker compose -f ota-ce.yaml up -d
 ```
+
+> **주의**: kafka 없이 `up -d`를 바로 실행하면 ota-lith가  
+> `No resolvable bootstrap urls given in bootstrap.servers` 오류로 실패하고  
+> 헬스 체크에서 Bad Gateway가 반환됩니다.
 
 ### 1-4. 헬스 체크
 
 ```bash
 curl http://director.ota.ce/health    # {"status":"OK"}
 curl http://reposerver.ota.ce/health  # {"status":"OK"}
+```
+
+헬스 체크가 실패하면 로그 확인:
+
+```bash
+docker compose -f ota-ce.yaml logs ota-lith --tail 30
 ```
 
 ### 1-5. credentials.zip 생성
