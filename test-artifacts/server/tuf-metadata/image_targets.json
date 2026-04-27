@@ -1,0 +1,33 @@
+{
+    "signatures": [
+        {
+            "keyid": "3f58d24f2e2f0ccfa58f0d63ba3e375075c2dbcd5c3e301ce241d27432787de5",
+            "method": "ed25519",
+            "sig": "uFut0l1B2MS9nTiXAssXoOEswQm813xFd91U1vzF/z2vTUaWZg37Yvro7OzorX7Fr2qdjYaxOeIV4HgKOsC0BA=="
+        }
+    ],
+    "signed": {
+        "expires": "2026-05-20T08:48:01Z",
+        "targets": {
+            "test-binary.bin": {
+                "hashes": {
+                    "sha256": "e96547c924dee500a95edd5c44e40606bef4c72431aa3cfcf655645a6b747c8f"
+                },
+                "length": 19,
+                "custom": {
+                    "name": "test-binary",
+                    "version": "1.0.0",
+                    "hardwareIds": [
+                        "jetson-nano"
+                    ],
+                    "targetFormat": "BINARY",
+                    "uri": null,
+                    "createdAt": "2026-04-19T08:48:01Z",
+                    "updatedAt": "2026-04-19T08:48:01Z"
+                }
+            }
+        },
+        "version": 2,
+        "_type": "Targets"
+    }
+}

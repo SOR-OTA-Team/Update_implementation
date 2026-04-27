@@ -1,0 +1,67 @@
+{
+    "signatures": [
+        {
+            "keyid": "2b7d921f6cbb4696bed6f8bfaf7356550bf9bc2c0080e832d4103801d2118386",
+            "method": "ed25519",
+            "sig": "MhbB4rN7JFSalr3p/j8gx1FlWUGWn8KuYVGtn0SzbdwdtxxUWDme9fJWPkXsHbq96hvA41mbK7Q/fHF+OF9jDw=="
+        }
+    ],
+    "signed": {
+        "keys": {
+            "2b7d921f6cbb4696bed6f8bfaf7356550bf9bc2c0080e832d4103801d2118386": {
+                "keyval": {
+                    "public": "4b75a19d0c978a29bce3273d206373716502494a8ccd59726e12a54c3bd5a5b3"
+                },
+                "keytype": "ED25519"
+            },
+            "3e2ffa0cf5e913b66e7fbd3d0f11e80ca7bd886543f8b166ba271ecf5a50591c": {
+                "keyval": {
+                    "public": "017d3cab8e3d64fbd5e66388cf7c7a2d81c2ede135c0c03954e5fe69d3f1e82a"
+                },
+                "keytype": "ED25519"
+            },
+            "6f3fff43ffd41b97e63ac06637f40ee6621b2406f0c67f476a754a9e4ce8cef0": {
+                "keyval": {
+                    "public": "68d75f7bdcd2b076b4f0e077185408d22fe4a3c9ae7ac92ae98ec9be6fee349c"
+                },
+                "keytype": "ED25519"
+            },
+            "37d763a4f2e86bca8a280eda12eb1239f93a2dbce665ca5c722b260695d2c7af": {
+                "keyval": {
+                    "public": "0d0e4ec31f7b817f085c0f73abc4a97270257f1b729c4b77c5426bb83c0fb203"
+                },
+                "keytype": "ED25519"
+            }
+        },
+        "roles": {
+            "targets": {
+                "keyids": [
+                    "6f3fff43ffd41b97e63ac06637f40ee6621b2406f0c67f476a754a9e4ce8cef0"
+                ],
+                "threshold": 1
+            },
+            "snapshot": {
+                "keyids": [
+                    "3e2ffa0cf5e913b66e7fbd3d0f11e80ca7bd886543f8b166ba271ecf5a50591c"
+                ],
+                "threshold": 1
+            },
+            "root": {
+                "keyids": [
+                    "2b7d921f6cbb4696bed6f8bfaf7356550bf9bc2c0080e832d4103801d2118386"
+                ],
+                "threshold": 1
+            },
+            "timestamp": {
+                "keyids": [
+                    "37d763a4f2e86bca8a280eda12eb1239f93a2dbce665ca5c722b260695d2c7af"
+                ],
+                "threshold": 1
+            }
+        },
+        "version": 1,
+        "expires": "2027-04-19T08:35:42Z",
+        "consistent_snapshot": false,
+        "_type": "Root"
+    }
+}

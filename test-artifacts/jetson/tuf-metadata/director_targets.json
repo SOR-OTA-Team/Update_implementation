@@ -1,0 +1,33 @@
+{
+    "signatures": [
+        {
+            "keyid": "6f3fff43ffd41b97e63ac06637f40ee6621b2406f0c67f476a754a9e4ce8cef0",
+            "method": "ed25519",
+            "sig": "yQ7wbkHohDtiGHguKb+O7mdFUFFR5RDaR+B+ksCPGgQhBdun/FAjx0QhhfxQMy2b/H1zSYcPE2c+Yp1+0rpFBg=="
+        }
+    ],
+    "signed": {
+        "expires": "2026-05-20T09:12:12Z",
+        "targets": {
+            "test-binary.bin": {
+                "hashes": {
+                    "sha256": "e96547c924dee500a95edd5c44e40606bef4c72431aa3cfcf655645a6b747c8f"
+                },
+                "length": 19,
+                "custom": {
+                    "uri": null,
+                    "ecuIdentifiers": {
+                        "f50cef40cdf439cb7c1843f0b8c3b7c20277e0b1f23cd6052c54ebb40c6d5b34": {
+                            "hardwareId": "jetson-nano"
+                        }
+                    }
+                }
+            }
+        },
+        "version": 2,
+        "custom": {
+            "correlationId": "urn:here-ota:campaign:cf97cbe7-6c49-4fdd-8dfa-10b486d77e69"
+        },
+        "_type": "Targets"
+    }
+}
