@@ -1,0 +1,41 @@
+{
+  "_comment": "이번 테스트 (pacman type=none) 에서 전송된 manifest 추정값",
+  "_note": "installation_report 없음 — pacman type=none은 설치를 수행하지 않아 device_installation_result 테이블이 비어있음",
+
+  "signatures": [
+    {
+      "keyid": "<primary Uptane 공개키 ID (sql.db primary_keys 테이블)>",
+      "method": "ed25519",
+      "sig": "<Base64 서명>"
+    }
+  ],
+  "signed": {
+    "primary_ecu_serial": "f50cef40cdf439cb7c1843f0b8c3b7c20277e0b1f23cd6052c54ebb40c6d5b34",
+    "ecu_version_manifests": {
+      "f50cef40cdf439cb7c1843f0b8c3b7c20277e0b1f23cd6052c54ebb40c6d5b34": {
+        "signatures": [
+          {
+            "keyid": "<ECU 공개키 ID>",
+            "method": "ed25519",
+            "sig": "<Base64 서명>"
+          }
+        ],
+        "signed": {
+          "ecu_serial": "f50cef40cdf439cb7c1843f0b8c3b7c20277e0b1f23cd6052c54ebb40c6d5b34",
+          "installed_image": {
+            "filepath": "test-binary.bin",
+            "fileinfo": {
+              "hashes": {
+                "sha256": "e96547c924dee500a95edd5c44e40606bef4c72431aa3cfcf655645a6b747c8f"
+              },
+              "length": 19
+            }
+          },
+          "attacks_detected": "",
+          "previous_timeserver_time": "1970-01-01T00:00:00Z",
+          "timeserver_time": "1970-01-01T00:00:00Z"
+        }
+      }
+    }
+  }
+}

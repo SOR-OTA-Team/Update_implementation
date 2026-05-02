@@ -1,0 +1,45 @@
+{
+  "signatures": [
+    {
+      "keyid": "6c23993435f9b910bff621148c947e478e1685835af2c6af7385f3816a930595",
+      "method": "rsassa-pss",
+      "sig": "wK93cRkL..."
+    }
+  ],
+  "signed": {
+    "primary_ecu_serial": "6c23993435f9b910bff621148c947e478e1685835af2c6af7385f3816a930595",
+    "ecu_version_manifest": [
+      {
+        "signatures": [
+          {
+            "keyid": "6c23993435f9b910bff621148c947e478e1685835af2c6af7385f3816a930595",
+            "method": "rsassa-pss",
+            "sig": "maIedf..."
+          }
+        ],
+        "signed": {
+          "ecu_serial": "6c23993435f9b910bff621148c947e478e1685835af2c6af7385f3816a930595",
+          "installed_image": {
+            "filepath": "unknown-eeba09ae...",
+            "fileinfo": {
+              "hashes": {
+                "sha256": "eeba09aecfbe8277ac33a5a2486ec2d6731739f3c1c701b42a0c3784af67ad90"
+              },
+              "length": 0
+            }
+          },
+          "attacks_detected": "",
+          "previous_timeserver_time": "1970-01-01T00:00:00Z",
+          "timeserver_time": "1970-01-01T00:00:00Z",
+          "custom": {
+            "operation_result": {
+              "id": "nginx_1.15.2",
+              "result_code": 0,
+              "result_text": "Pulling ostree image was successful"
+            }
+          }
+        }
+      }
+    ]
+  }
+}

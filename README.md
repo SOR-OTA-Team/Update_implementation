@@ -34,6 +34,14 @@ Mac에서 OTA-CE 서버를 Docker로 실행하고, Jetson Nano(또는 Linux 보�
 │   ├── aktualizr-storage-internals.md             # 스토리지 구조, 락, HSM, TOML 설정 상세
 │   ├── aktualizr-lowlevel-files-and-atomicity.md  # 저수준 파일, 접근 flow, atomicity
 │   └── aktualizr-manifest.md                      # Device Manifest 구조, 전송 시점, director 처리
+├── manifest/
+│   ├── README.md                                  # 개요, 전송 시점, 서명 구조, Primary vs Secondary
+│   ├── structure.md                               # JSON 필드 상세, 버전별 차이, 소스코드 근거
+│   └── examples/
+│       ├── v1_manifest.json                       # v1 예시 (ecu_version_manifest 배열)
+│       ├── v2_manifest.json                       # v2 예시 (operation_result, deprecated)
+│       ├── v3_manifest.json                       # v3 예시 (installation_report 포함)
+│       └── this_test_manifest.json                # 이번 테스트 추정값 (pacman type=none)
 ├── scripts/
 │   ├── gen-device-cert.sh          # 디바이스 인증서 생성
 │   ├── get-credentials.sh          # credentials.zip 생성
